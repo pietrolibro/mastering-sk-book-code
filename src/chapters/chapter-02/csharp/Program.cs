@@ -3,8 +3,6 @@ using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Connectors.Ollama;
 
-using System.Threading.Tasks;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.UserSecrets;
 
@@ -14,11 +12,16 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        // Configuration and kernel setup.
+        // Set to true to use OpenAI, false to use Ollama.
         var useOpenAI = false;
+
+        // Configuration and kernel setup.
         var configuration = new ConfigurationBuilder()
             .AddUserSecrets<Program>()
             .Build();
+
+#pragma warning disable SKEXP0001, SKEXP0020, SKEXP0050, SKEXP0070
+            
         var builder = Kernel.CreateBuilder();
 
         if (useOpenAI)
@@ -28,7 +31,6 @@ class Program
         }
         else
         {
-            #pragma warning disable SKEXP0001, SKEXP0020, SKEXP0050, SKEXP0070
             builder.AddOllamaChatCompletion(
                 modelId: "llama3.2:latest",
                 httpClient: new HttpClient
