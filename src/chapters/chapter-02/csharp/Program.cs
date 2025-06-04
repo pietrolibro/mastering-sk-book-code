@@ -1,19 +1,19 @@
 ﻿using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
-using Microsoft.SemanticKernel.Connectors.Ollama;
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.UserSecrets;
 
-namespace HelloWorldAIChatApp;
+using OllamaSharp.Models.Chat;
+
+namespace HelloWorldSKChat;
 
 class Program
 {
     static async Task Main(string[] args)
     {
         // Set to true to use OpenAI, false to use Ollama.
-        var useOpenAI = false;
+        var useOpenAI = true;
 
         // Configuration and kernel setup.
         var configuration = new ConfigurationBuilder()
@@ -21,7 +21,7 @@ class Program
             .Build();
 
 #pragma warning disable SKEXP0001, SKEXP0020, SKEXP0050, SKEXP0070
-            
+
         var builder = Kernel.CreateBuilder();
 
         if (useOpenAI)
@@ -41,6 +41,7 @@ class Program
         }
 
         Kernel kernel = builder.Build();
+
         var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
         var chatHistory = new ChatHistory();
 
@@ -52,7 +53,8 @@ class Program
         Console.WriteLine("Select demo to run:");
         Console.WriteLine("1 - Simple chat (not streaming)");
         Console.WriteLine("2 - Streaming chat");
-        Console.Write("Enter 1 or 2: ");
+        Console.WriteLine("3 - Streaming chat, with token stats");
+        Console.Write("Enter 1,2 or 3: ");
 
         var demoChoice = Console.ReadLine();
         if (demoChoice == "1")
@@ -62,6 +64,10 @@ class Program
         else if (demoChoice == "2")
         {
             await RunStreamingChatAsync(kernel, chatCompletionService, chatHistory);
+        }
+        else if (demoChoice == "3")
+        {
+            await RunStreamingChatWithStatsAsync(kernel, chatCompletionService, chatHistory);
         }
         else
         {
@@ -106,24 +112,9 @@ class Program
             chatHistory.AddUserMessage(userInput);
 
             IAsyncEnumerable<StreamingChatMessageContent> streamingResponse =
-                chatCompletionService.GetStreamingChatMessageContentsAsync(
-                    chatHistory: chatHistory, kernel: kernel);
+            chatCompletionService.GetStreamingChatMessageContentsAsync(chatHistory: chatHistory);
 
-            string? fullResponse = string.Empty;
-            bool printedRole = false;
-            await foreach (StreamingChatMessageContent chunk in streamingResponse)
-            {
-                if (!printedRole && chunk.Role.HasValue && !string.IsNullOrEmpty(chunk.Content))
-                {
-                    Console.Write($"{chunk.Role.Value}: ");
-                    printedRole = true;
-                }
-                if (!string.IsNullOrEmpty(chunk.Content))
-                {
-                    fullResponse += chunk.Content;
-                    Console.Write(chunk.Content);
-                }
-            }
+            string fullResponse = await StreamMessageOutputAsync(streamingResponse);
 
             if (!string.IsNullOrWhiteSpace(fullResponse))
             {
@@ -132,5 +123,115 @@ class Program
             }
         }
         Console.WriteLine("Exiting the application. Goodbye!");
+    }
+
+    static async Task RunStreamingChatWithStatsAsync(Kernel kernel, IChatCompletionService chatCompletionService, ChatHistory chatHistory)
+    {
+        while (true)
+        {
+            Console.Write("User Input > ");
+            var userInput = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(userInput))
+                continue;
+            if (userInput.Trim().ToLower() == "exit")
+                break;
+
+            chatHistory.AddUserMessage(userInput);
+
+            IAsyncEnumerable<StreamingChatMessageContent> streamingResponse =
+            chatCompletionService.GetStreamingChatMessageContentsAsync(chatHistory: chatHistory);
+
+            string fullResponse = await StreamMessageOutputWithTokensStatsAsync(streamingResponse);
+
+            if (!string.IsNullOrWhiteSpace(fullResponse))
+            {
+                Console.WriteLine();
+                chatHistory.AddMessage(AuthorRole.Assistant, fullResponse);
+            }
+        }
+        Console.WriteLine("Exiting the application. Goodbye!");
+    }
+
+    static async Task<string> StreamMessageOutputAsync(IAsyncEnumerable<StreamingChatMessageContent> streamingResponse)
+    {
+        string? fullResponse = string.Empty;
+        bool printedRole = false;
+        await foreach (StreamingChatMessageContent chunk in streamingResponse)
+        {
+            if (!printedRole && chunk.Role.HasValue && !string.IsNullOrEmpty(chunk.Content))
+            {
+                Console.Write($"{chunk.Role.Value}: ");
+                printedRole = true;
+            }
+            if (!string.IsNullOrEmpty(chunk.Content))
+            {
+                fullResponse += chunk.Content;
+                Console.Write(chunk.Content);
+            }
+        }
+        return fullResponse;
+    }
+
+    /// <summary>
+    /// This method is used to stream the message output with the token stats.
+    /// Reference:
+    /// - https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/Concepts/ChatCompletion/Ollama_ChatCompletionStreaming.cs
+    /// - https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/Concepts/ChatCompletion/OpenAI_ChatCompletionStreaming.cs
+    /// </summary>
+    /// <param name="streamingResponse"></param>
+    /// <returns></returns>
+    private static async Task<string> StreamMessageOutputWithTokensStatsAsync(IAsyncEnumerable<StreamingChatMessageContent> streamingResponse)
+    {
+        string? fullResponse = string.Empty;
+        await foreach (StreamingChatMessageContent chunk in streamingResponse)
+        {
+            if (chunk is OpenAIStreamingChatMessageContent openAIChunk)
+            {
+                fullResponse += openAIChunk.Content;
+                Console.Write(openAIChunk.Content);
+
+                // The last message in the chunk has the usage metadata.
+                // https://platform.openai.com/docs/api-reference/chat/create#chat-create-stream_options
+                if (openAIChunk.Metadata?["Usage"] is not null) OutputInnerContent(openAIChunk);
+            }
+
+            if (chunk.InnerContent is OllamaSharp.Models.Chat.ChatResponseStream ollamaChunk)
+            {
+                // https://github.com/awaescher/OllamaSharp/blob/main/src/Models/Chat/Message.cs
+                fullResponse += ollamaChunk?.Message?.Content;
+                Console.Write(ollamaChunk?.Message?.Content);
+            }
+
+            if (chunk.InnerContent is OllamaSharp.Models.Chat.ChatDoneResponseStream chatDoneResponse)
+            {
+                OutputInnerContent(chatDoneResponse);
+            }
+        }
+        return fullResponse;
+    }
+
+    private static void OutputInnerContent(OpenAIStreamingChatMessageContent? doneStream)
+    {
+        if (doneStream is null) { return; }
+        // https://github.com/openai/openai-dotnet/blob/main/src/Generated/Models/ChatTokenUsage.cs
+        OpenAI.Chat.ChatTokenUsage? usage = doneStream.Metadata?["Usage"] as OpenAI.Chat.ChatTokenUsage;
+
+        Console.WriteLine("---------- STATS --------------");
+        Console.WriteLine($"Output Tokens: {usage?.InputTokenCount}");
+        Console.WriteLine($"Input Tokens: {usage?.OutputTokenCount}");
+        Console.WriteLine($"Total Tokens: {usage?.TotalTokenCount}");
+        Console.WriteLine("-------------------------------");
+    }
+
+    private static void OutputInnerContent(ChatDoneResponseStream doneStream)
+    {
+        if (doneStream is null) { return; }
+        // https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/Concepts/ChatCompletion/Ollama_ChatCompletionStreaming.cs#L259
+        Console.WriteLine("");
+        Console.WriteLine("---------- STATS --------------");
+        Console.WriteLine($"The number of tokens in the response: {doneStream.EvalCount}");
+        Console.WriteLine($"The number of tokens in the prompt: {doneStream.PromptEvalCount}");
+        Console.WriteLine($"Prompt eval duration: {doneStream.PromptEvalDuration}");
+        Console.WriteLine("-------------------------------");
     }
 }

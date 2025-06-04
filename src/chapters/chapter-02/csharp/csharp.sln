@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorldAIChatApp", "HelloWorldAIChatApp.csproj", "{9FB26097-47D2-6B0B-3231-137472012ADD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9FB26097-47D2-6B0B-3231-137472012ADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FB26097-47D2-6B0B-3231-137472012ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FB26097-47D2-6B0B-3231-137472012ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FB26097-47D2-6B0B-3231-137472012ADD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3FF9D8FD-A3CB-4D91-8CB8-6ACCB10657EB}
+	EndGlobalSection
+EndGlobal

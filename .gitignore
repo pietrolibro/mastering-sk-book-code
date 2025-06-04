@@ -1,6 +1,8 @@
 src/chapters/chapter-02/csharp/bin/
 src/chapters/chapter-02/csharp/obj/
 
+src/chapters/chapter-02/python/.env
+src/chapters/chapter-02/python/hello-world-sk-chat-env/
 
 src/chapters/chapter-05/csharp/bin/
 src/chapters/chapter-05/csharp/obj/
