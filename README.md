@@ -22,3 +22,5 @@ src/
 - Each `python/` folder contains the Python scripts and requirements for the same examples.
 
 This structure allows you to easily locate and run the code relevant to each chapter and language as you progress through the book.
+
+Each project, when run, provides a menu that allows you to pick and execute a specific example from the chapter, making it easy to explore and test individual features or concepts.

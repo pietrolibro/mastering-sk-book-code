@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "chapters", "chapters", "{A2E14D5F-A667-2934-B562-2A16AB0DB264}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "chapter-02", "chapter-02", "{2AFFD657-4606-53B3-F444-933B6189C2B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorldAIChatApp", "src\chapters\chapter-02\csharp\HelloWorldAIChatApp.csproj", "{007A6C3F-86EE-76D5-33DA-69C5959F74F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "chapter-05", "chapter-05", "{CB788C30-9CA1-D185-0E11-350CFD59157D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedAIShoppingAssistant", "src\chapters\chapter-05\csharp\AdvancedAIShoppingAssistant.csproj", "{C916E33D-CD68-774B-B04F-1059FF32AFBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{007A6C3F-86EE-76D5-33DA-69C5959F74F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{007A6C3F-86EE-76D5-33DA-69C5959F74F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{007A6C3F-86EE-76D5-33DA-69C5959F74F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{007A6C3F-86EE-76D5-33DA-69C5959F74F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C916E33D-CD68-774B-B04F-1059FF32AFBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C916E33D-CD68-774B-B04F-1059FF32AFBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C916E33D-CD68-774B-B04F-1059FF32AFBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C916E33D-CD68-774B-B04F-1059FF32AFBD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A2E14D5F-A667-2934-B562-2A16AB0DB264} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{2AFFD657-4606-53B3-F444-933B6189C2B4} = {A2E14D5F-A667-2934-B562-2A16AB0DB264}
+		{007A6C3F-86EE-76D5-33DA-69C5959F74F5} = {2AFFD657-4606-53B3-F444-933B6189C2B4}
+		{CB788C30-9CA1-D185-0E11-350CFD59157D} = {A2E14D5F-A667-2934-B562-2A16AB0DB264}
+		{C916E33D-CD68-774B-B04F-1059FF32AFBD} = {CB788C30-9CA1-D185-0E11-350CFD59157D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0EEB3C2B-B0A5-4A4F-B045-AA899DF4AEC5}
+	EndGlobalSection
+EndGlobal
