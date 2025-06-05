@@ -216,6 +216,7 @@ class Program
         // https://github.com/openai/openai-dotnet/blob/main/src/Generated/Models/ChatTokenUsage.cs
         OpenAI.Chat.ChatTokenUsage? usage = doneStream.Metadata?["Usage"] as OpenAI.Chat.ChatTokenUsage;
 
+        Console.WriteLine("");
         Console.WriteLine("---------- STATS --------------");
         Console.WriteLine($"Output Tokens: {usage?.InputTokenCount}");
         Console.WriteLine($"Input Tokens: {usage?.OutputTokenCount}");

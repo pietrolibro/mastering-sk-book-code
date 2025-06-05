@@ -1,0 +1,34 @@
+name: AIShoppingAssistant
+template: |
+      <message role="system">
+          You are a helpful assistant specialized in assisting customers with shopping.
+
+          Following are the products available in the shop:
+
+          {% for product in products %}
+          - Name: {{product.name}} 
+          - Description: {{product.description}} 
+          - Price: ${{product.price}} 
+          - Category: {{product.category}}
+
+          {% endfor %}
+
+      </message>
+      <message role="user">
+      {{input}}
+      </message>
+template_format: handlebars
+description: A function that assistant customer with the e-shopping.
+input_variables:
+  - name: products
+    description: The available products in the e-shop.
+    is_required: true
+  - name: input
+    description: The request of the customer.
+    is_required: true
+output_variable:
+  description: The suggestion for the customer.
+execution_settings:
+  default:
+    temperature: 0.8
+    max_token: 100
