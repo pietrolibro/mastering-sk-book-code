@@ -11,6 +11,9 @@ using AdvancedAIShoppingAssistant.Demos;
 using AdvancedAIShoppingAssistant.Services;
 using AdvancedAIShoppingAssistant.NativePlugins;
 
+// using OllamaSharp;
+// using OllamaSharp.MicrosoftAi;
+
 namespace AdvancedAIShoppingAssistant;
 
 class Program
@@ -27,7 +30,9 @@ class Program
 
 #pragma warning disable SKEXP0001, SKEXP0010, SKEXP0020, SKEXP0040, SKEXP0050, SKEXP0070
 
-        var builder = Kernel.CreateBuilder();
+        // var builder = Kernel.CreateBuilder();
+        
+        var services = new ServiceCollection();
 
         if (useOpenAI)
         {
@@ -39,43 +44,81 @@ class Program
                 return;
             }
 
-            builder.AddOpenAIChatCompletion(
+            services.AddOpenAIChatClient(
                 modelId: "gpt-4.1-mini",
                 apiKey: openAIApiKey);
 
-            builder.AddOpenAIEmbeddingGenerator(
+            services.AddOpenAIEmbeddingGenerator(
                 modelId: "text-embedding-ada-002",
                 apiKey: openAIApiKey);
+
+            // IChatClient client = new OpenAIChatClient(new OpenAI.Chat.ChatClient("gpt-4.1-mini", openAIApiKey))
+            //     .AsBuilder()
+            //     .UseFunctionInvocation()
+            //     .Build();
+            IChatClient openaiClient = new OpenAI.Chat.ChatClient("gpt-4.1-mini", openAIApiKey)
+                .AsIChatClient().AsBuilder().UseFunctionInvocation().Build();
+
+        // IChatClient client = openaiClient
+        //     .AsBuilder()
+        //     .UseFunctionInvocation()
+        //     .Build();
         }
         else
         {
             HttpClient httpClient = new() { BaseAddress = new Uri("http://localhost:11434") };
 
-            builder.AddOllamaChatCompletion(
+            services.AddOllamaChatCompletion(
                 modelId: "llama3.2:latest",
                 httpClient: httpClient);
 
-            builder.AddOllamaEmbeddingGenerator(
+            services.AddOllamaEmbeddingGenerator(
                 modelId: "nomic-embed-text:latest",
                 httpClient: httpClient);
         }
 
-        // Adding needed dependencies for the Plugins.
-        builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddConsole().SetMinimumLevel(LogLevel.Error));
 
-        // Adding the services needed by the plugins and injected like dependencies.
-        builder.Services.AddSingleton<ProductCatalogService>();
-        builder.Services.AddSingleton<UserProfileService>();
+        // Adding needed dependencies for the Plugins.
+        services.AddLogging(loggingBuilder => loggingBuilder.AddConsole().SetMinimumLevel(LogLevel.Error));
+
+        // // Adding the services needed by the plugins and injected like dependencies.
+        services.AddSingleton<ProductCatalogService>();
+        services.AddSingleton<UserProfileService>();
+
+        // Register the InMemoryVectorStore
+        services.AddInMemoryVectorStore();
+
+        // Register Semantic Kernel
+        services.AddKernel();
+        var serviceProvider = services.BuildServiceProvider();
+        var kernel = serviceProvider.GetRequiredService<Kernel>();
+
+        CartPlugin cartPlugin = new(serviceProvider.GetRequiredService<ProductCatalogService>());
+
+        UserProfilePlugin userProfilePlugin = new(
+            serviceProvider.GetRequiredService<ILogger<UserProfilePlugin>>(),
+            serviceProvider.GetRequiredService<UserProfileService>());
+
+        var chatOptions = new ChatOptions
+        {
+            Tools = [
+                AIFunctionFactory.Create( userProfilePlugin.GetBrandAffinity),
+                AIFunctionFactory.Create(userProfilePlugin.GetBudgetLimit),
+                AIFunctionFactory.Create(userProfilePlugin.GetCategoryInterests),
+                AIFunctionFactory.Create(userProfilePlugin.GetEmailAddress),
+                AIFunctionFactory.Create(userProfilePlugin.GetLatestVisitedProducts),
+                AIFunctionFactory.Create(cartPlugin.AddToCart),
+                AIFunctionFactory.Create(cartPlugin.RemoveFromCart),
+                AIFunctionFactory.Create(cartPlugin.ViewCart),
+                AIFunctionFactory.Create(cartPlugin.GetTotal),
+            ],
+        };
 
         // Adding the Plugin to the Kernel.
-        builder.Plugins.AddFromType<CartPlugin>("CartPlugin");
-        builder.Plugins.AddFromType<ProductsPlugin>("ProductsPlugin");
-        builder.Plugins.AddFromType<UserProfilePlugin>("UserProfilePlugin");
+        // kernel.Plugins.AddFromType<CartPlugin>("CartPlugin");
+        // kernel.Plugins.AddFromType<ProductsPlugin>("ProductsPlugin");
+        // kernel.Plugins.AddFromType<UserProfilePlugin>("UserProfilePlugin");
 
-        builder.Services.AddInMemoryVectorStore();
-
-        // Building the Kernel.
-        var kernel = builder.Build();
 
         while (true)
         {

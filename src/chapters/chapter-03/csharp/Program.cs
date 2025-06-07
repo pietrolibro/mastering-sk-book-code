@@ -7,6 +7,8 @@ using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 using Microsoft.SemanticKernel.PromptTemplates.Liquid;
 using Microsoft.Extensions.Configuration;
 
+using OllamaSharp;
+
 namespace AIShoppingAssistant;
 
 class Program
@@ -28,11 +30,11 @@ class Program
         if (useOpenAI)
         {
             string openAIApiKey = configuration["OpenAI:ApiKey"];
-            builder.AddOpenAIChatCompletion(modelId: "gpt-4.1-mini", apiKey: openAIApiKey);
+            builder.AddOpenAIClient(modelId: "gpt-4.1-mini", apiKey: openAIApiKey);
         }
         else
         {
-            builder.AddOllamaChatCompletion(
+            builder.AddOllamaApiClient(
                 modelId: "llama3.2:latest",
                 httpClient: new HttpClient { BaseAddress = new Uri("http://localhost:11434") }
             );

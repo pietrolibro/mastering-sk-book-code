@@ -1,18 +1,11 @@
 using Microsoft.Extensions.AI;
 
 using Microsoft.SemanticKernel;
-// using Microsoft.SemanticKernel.Data;
 using Microsoft.SemanticKernel.Connectors.InMemory;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
-using Microsoft.SemanticKernel.Connectors.Ollama;
-
-using OpenAI.Chat;
 
 using AdvancedAIShoppingAssistant.Models;
 using AdvancedAIShoppingAssistant.Helpers;
-using AdvancedAIShoppingAssistant.Services;
-using AdvancedAIShoppingAssistant.NativePlugins;
+
 
 namespace AdvancedAIShoppingAssistant.Demos;
 public partial class Scenarios
@@ -22,7 +15,7 @@ public partial class Scenarios
         Console.WriteLine("\n=== DEMO: Duplicate-Question Detection (FAQ) ===\n");
 
         var vectorStore = kernel.GetRequiredService<InMemoryVectorStore>();
-        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
+        var chatClient = kernel.GetRequiredService<IChatClient>();
         var embeddingGenerator = kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
 
         var faqCollection = vectorStore.GetCollection<int, FaqRecord>("faq_products");
@@ -48,8 +41,11 @@ public partial class Scenarios
             });
         }
 
-        ChatHistory chatHistory = new ChatHistory();
-        chatHistory.AddSystemMessage(systemPrompt);
+        // ChatHistory chatHistory = new();
+        // chatHistory.AddSystemMessage(systemPrompt); // Change Here.
+
+        // ChatHistory chatHistory = new ChatHistory();
+        List<ChatMessage> chatHistory =[new ChatMessage(ChatRole.System, systemPrompt)]; // Change Here.
 
 
         var queries = new[]
@@ -61,7 +57,7 @@ public partial class Scenarios
 
         foreach (var query in queries)
         {
-            await KernelHelper.ChatAsync(chatCompletionService, embeddingGenerator, chatHistory, query, kernel, faqCollection);
+            await KernelHelper.ChatAsync(kernel,chatClient, embeddingGenerator, chatHistory, query, faqCollection);
         }
 
     }

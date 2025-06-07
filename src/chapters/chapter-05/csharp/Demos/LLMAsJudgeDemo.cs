@@ -5,7 +5,7 @@ using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Connectors.Ollama;
 
-using OpenAI.Chat;
+// using OpenAI.Chat;
 
 using Microsoft.Extensions.AI;
 
@@ -22,7 +22,8 @@ public partial class Scenarios
         Console.WriteLine("\n=== DEMO: LLM-as-Judge Evaluation ===\n");
 
         var vectorStore = kernel.GetRequiredService<InMemoryVectorStore>();
-        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
+        // var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
+        var chatClient = kernel.GetRequiredService<IChatClient>();
         var textEmbeddingGenerationService = kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
 
         var faqCollection = vectorStore.GetCollection<int, FaqRecord>("faq_products");
@@ -31,10 +32,10 @@ public partial class Scenarios
         // Seed a mini FAQ ------------------------------------------------------------
         var faqPairs = new (int id, string q, string a)[]
         {
-                (1, "What is a good smartphone under $1000?", "Smartphone X ($999.99) packs AI-Powered features and top tier performance."),
-                (2, "I'm looking for affordable fitness equipment.", "Resistance Bands C ($29.99) and Yoga Mat D ($24.99) are budget friendly options."),
-                (3, "Which laptop is best for high-performance gaming?", "Laptop Z ($1299.99) delivers excellent gaming power courtesy of BrandA's latest GPU."),
-                (4, "Do you have noise-canceling headphones?", "Wireless Headphones ($199.99) provide superb ANC with 30 hour battery life."),
+            (1, "What is a good smartphone under $1000?", "Smartphone X ($999.99) packs AI-Powered features and top tier performance."),
+            (2, "I'm looking for affordable fitness equipment.", "Resistance Bands C ($29.99) and Yoga Mat D ($24.99) are budget friendly options."),
+            (3, "Which laptop is best for high-performance gaming?", "Laptop Z ($1299.99) delivers excellent gaming power courtesy of BrandA's latest GPU."),
+            (4, "Do you have noise-canceling headphones?", "Wireless Headphones ($199.99) provide superb ANC with 30 hour battery life."),
         };
 
         foreach (var (id, q, a) in faqPairs)
@@ -48,8 +49,10 @@ public partial class Scenarios
             });
         }
 
-        var chatHistory = new ChatHistory();
-        chatHistory.AddSystemMessage(systemPrompt);
+        // var chatHistory = new ChatHistory();
+        // chatHistory.AddSystemMessage(systemPrompt);
+        List<ChatMessage> chatHistory =[new ChatMessage(ChatRole.System, systemPrompt)]; // Change Here.
+
 
         var queries = new[] {
         "What is a good smartphone under $1000?",
@@ -59,7 +62,8 @@ public partial class Scenarios
         foreach (var query in queries)
         {
             // Get assistant response
-            string assistantResponse = await KernelHelper.ChatAsync(chatCompletionService, textEmbeddingGenerationService, chatHistory, query, kernel, faqCollection);
+            string assistantResponse = await KernelHelper.ChatAsync(kernel,chatClient,
+                textEmbeddingGenerationService, chatHistory, query,faqCollection);
 
             // Evaluate the response using LLM-as-Judge
             string evaluationPrompt = """

@@ -1,7 +1,9 @@
+using Microsoft.Extensions.AI;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 
 using AdvancedAIShoppingAssistant.Helpers;
+using OllamaSharp;
 
 namespace AdvancedAIShoppingAssistant.Demos;
 
@@ -11,10 +13,10 @@ public partial class Scenarios
     {
         Console.WriteLine("\n=== DEMO: User Profile as Plugin ===\n");
 
-        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
+        var chatClient = kernel.GetRequiredService<IChatClient>();
 
-        ChatHistory chatHistory = new ChatHistory();
-        chatHistory.AddSystemMessage(systemPrompt);
+        // ChatHistory chatHistory = new ChatHistory();
+        List<ChatMessage> chatHistory =[new ChatMessage(ChatRole.System, systemPrompt)]; // Change Here.
 
         var queries = new[]
         {
@@ -27,7 +29,7 @@ public partial class Scenarios
 
         foreach (var query in queries)
         {
-            await KernelHelper.ChatAsync(kernel, chatCompletionService, chatHistory, query);
+            await KernelHelper.ChatAsync(kernel, chatClient, chatHistory, query);
         }
     }
 }
