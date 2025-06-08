@@ -11,9 +11,6 @@ using AdvancedAIShoppingAssistant.Demos;
 using AdvancedAIShoppingAssistant.Services;
 using AdvancedAIShoppingAssistant.NativePlugins;
 
-// using OllamaSharp;
-// using OllamaSharp.MicrosoftAi;
-
 namespace AdvancedAIShoppingAssistant;
 
 class Program
@@ -52,17 +49,8 @@ class Program
                 modelId: "text-embedding-ada-002",
                 apiKey: openAIApiKey);
 
-            // IChatClient client = new OpenAIChatClient(new OpenAI.Chat.ChatClient("gpt-4.1-mini", openAIApiKey))
-            //     .AsBuilder()
-            //     .UseFunctionInvocation()
-            //     .Build();
             IChatClient openaiClient = new OpenAI.Chat.ChatClient("gpt-4.1-mini", openAIApiKey)
                 .AsIChatClient().AsBuilder().UseFunctionInvocation().Build();
-
-        // IChatClient client = openaiClient
-        //     .AsBuilder()
-        //     .UseFunctionInvocation()
-        //     .Build();
         }
         else
         {
@@ -99,26 +87,25 @@ class Program
             serviceProvider.GetRequiredService<ILogger<UserProfilePlugin>>(),
             serviceProvider.GetRequiredService<UserProfileService>());
 
-        var chatOptions = new ChatOptions
-        {
-            Tools = [
-                AIFunctionFactory.Create( userProfilePlugin.GetBrandAffinity),
-                AIFunctionFactory.Create(userProfilePlugin.GetBudgetLimit),
-                AIFunctionFactory.Create(userProfilePlugin.GetCategoryInterests),
-                AIFunctionFactory.Create(userProfilePlugin.GetEmailAddress),
-                AIFunctionFactory.Create(userProfilePlugin.GetLatestVisitedProducts),
-                AIFunctionFactory.Create(cartPlugin.AddToCart),
-                AIFunctionFactory.Create(cartPlugin.RemoveFromCart),
-                AIFunctionFactory.Create(cartPlugin.ViewCart),
-                AIFunctionFactory.Create(cartPlugin.GetTotal),
-            ],
-        };
+        // var chatOptions = new ChatOptions
+        // {
+        //     Tools = [
+        //         AIFunctionFactory.Create( userProfilePlugin.GetBrandAffinity),
+        //         AIFunctionFactory.Create(userProfilePlugin.GetBudgetLimit),
+        //         AIFunctionFactory.Create(userProfilePlugin.GetCategoryInterests),
+        //         AIFunctionFactory.Create(userProfilePlugin.GetEmailAddress),
+        //         AIFunctionFactory.Create(userProfilePlugin.GetLatestVisitedProducts),
+        //         AIFunctionFactory.Create(cartPlugin.AddToCart),
+        //         AIFunctionFactory.Create(cartPlugin.RemoveFromCart),
+        //         AIFunctionFactory.Create(cartPlugin.ViewCart),
+        //         AIFunctionFactory.Create(cartPlugin.GetTotal),
+        //     ],
+        // };
 
         // Adding the Plugin to the Kernel.
-        // kernel.Plugins.AddFromType<CartPlugin>("CartPlugin");
-        // kernel.Plugins.AddFromType<ProductsPlugin>("ProductsPlugin");
-        // kernel.Plugins.AddFromType<UserProfilePlugin>("UserProfilePlugin");
-
+        kernel.Plugins.AddFromType<CartPlugin>("CartPlugin");
+        kernel.Plugins.AddFromType<ProductsPlugin>("ProductsPlugin");
+        kernel.Plugins.AddFromType<UserProfilePlugin>("UserProfilePlugin");
 
         while (true)
         {

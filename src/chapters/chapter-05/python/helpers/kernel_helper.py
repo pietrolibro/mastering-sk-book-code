@@ -5,16 +5,6 @@ from models.faq_record import FaqRecord
 import asyncio
 import yaml
 
-# from semantic_kernel import Kernel
-# from semantic_kernel.functions import KernelFunction
-# from semantic_kernel.contents.chat_history import ChatHistory
-# from semantic_kernel.connectors.ai import PromptExecutionSettings
-# from semantic_kernel.connectors.ai.function_choice_behavior import FunctionChoiceBehavior
-# from semantic_kernel.prompt_template import KernelPromptTemplate, HandlebarsPromptTemplate, Jinja2PromptTemplate
-# from semantic_kernel.prompt_template import InputVariable, PromptTemplateConfig
-# from semantic_kernel.connectors.ai.ollama import OllamaChatCompletion,  OllamaChatPromptExecutionSettings
-# from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion, OpenAIChatPromptExecutionSettings
-# from semantic_kernel.connectors.ai.chat_completion_client_base import ChatCompletionClientBase
 from semantic_kernel.functions import KernelArguments
 
 from semantic_kernel import Kernel
@@ -158,7 +148,7 @@ class KernelHelper:
                 history=history
             )
 
-            print(f"Assistant >>> {generated_response}\n")
+            print(f"\nAssistant >>> {generated_response}\n")
 
     async def chat_with_faq_async(self,
         kernel: Kernel, 
@@ -197,6 +187,6 @@ class KernelHelper:
                 history=history
             )
 
-        print(f"Assistant >>> {generated_response}\n")    
+        print(f"Assistant >>> {generated_response}")    
 
         return generated_response

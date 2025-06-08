@@ -16,22 +16,6 @@ from semantic_kernel.contents.chat_history import ChatHistory
 
 from helpers.kernel_helper import KernelHelper
 from models.faq_record import FaqRecord
-
-# _T = TypeVar("_T")
-
-# def print_record(result: VectorSearchResult[_T] | None = None, record: _T | None = None):
-#     if result:
-#         record = result.record
-#     print(f"  Found id: {record.id}")
-#     print(f"    Question: {record.question}")
-#     print(f"    Answer: {record.answer}")
-
-#     if result and result.score is not None:
-#         print(f"    Score: {result.score}")
-#     # print(f"    Content: {record.content}")
-#     # print(f"    Tag: {record.tag}")
-#     if record.question_embedding is not None:
-#         print(f"    Vector (first five): {record.question_embedding[:5]}")
    
 
 async def run_duplicate_questions_demo(kernel, chat_service : ChatCompletionClientBase, 

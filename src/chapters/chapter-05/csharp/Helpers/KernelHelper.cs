@@ -1,6 +1,4 @@
 using Microsoft.SemanticKernel;
-// using Microsoft.SemanticKernel.Data;
-// using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.Connectors.InMemory;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -49,12 +47,6 @@ public static class KernelHelper
         return string.Empty;
     }
 
-    // public static async Task<string> ChatAsync(IChatClient chatClient,
-    //     IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator,
-    //     ChatHistory history, string userPrompt,
-    //     Kernel kernel,
-    //     VectorStoreCollection<int, FaqRecord> faqCollection)
-    // {
     public static async Task<string> ChatAsync(Kernel kernel,IChatClient chatClient,
         IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator,
         List<ChatMessage> history, string userPrompt,

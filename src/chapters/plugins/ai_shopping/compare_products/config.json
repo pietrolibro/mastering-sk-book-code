@@ -1,0 +1,12 @@
+{
+    "schema": 1,
+    "description": "Compares two products and provides a simple summary.",
+    "type": "completion",
+    "name": "compare_products",
+    "template_format": "semantic-kernel",
+    "input_variables": [
+      { "name": "productA", "description": "First product details", "is_required": true },
+      { "name": "productB", "description": "Second product details", "is_required": true }
+    ]
+  }
+  

@@ -93,12 +93,10 @@ def products_as_string(products):
         for p in products
     )
 
+
 # This function demonstrates how to run a basic semantic function in Semantic Kernel.
 async def run_basic_semantic_function(kernel: Kernel):
-    prompt = "I'm looking for a Book to learn about cloud. Do you have something?"
-    function = kernel.add_function(function_name="function01", plugin_name="plugin01", prompt=prompt)
-    result = await kernel.invoke(function)
-    print(f"Function Result:\n{result}\n")
+    
 
 # This function demonstrates how to use Semantic Kernel prompt template with a semantic function.
 async def run_sk_prompt_template(kernel: Kernel, use_openai: bool):

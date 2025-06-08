@@ -10,7 +10,7 @@ This project is an advanced AI-powered shopping assistant using Python and Seman
 
 ### 1. Create a Virtual Environment
 ```zsh
-python3 -m venv ai-shopping-assistant-env
+python -m venv ai-shopping-assistant-env
 ```
 
 ### 2. Activate the Virtual Environment

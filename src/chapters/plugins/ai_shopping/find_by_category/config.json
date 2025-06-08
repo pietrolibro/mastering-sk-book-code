@@ -1,0 +1,12 @@
+{
+    "schema": 1,
+    "description": "Finds and lists products matching a category.",
+    "type": "completion",
+    "name": "find_by_category",
+    "template_format": "semantic-kernel",
+    "input_variables": [
+      { "name": "products", "description": "List of all products", "is_required": true },
+      { "name": "category", "description": "Target category name", "is_required": true }
+    ]
+  }
+  

@@ -1,0 +1,12 @@
+{
+    "schema": 1,
+    "description": "Recommends products based on user request.",
+    "type": "completion",
+    "name": "recommend_products",
+    "template_format": "semantic-kernel",
+    "input_variables": [
+      { "name": "products", "description": "Available product list", "is_required": true },
+      { "name": "input", "description": "User's product search query", "is_required": true }
+    ]
+  }
+  

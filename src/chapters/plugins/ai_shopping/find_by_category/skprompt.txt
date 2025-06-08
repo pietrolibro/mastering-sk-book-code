@@ -1,0 +1,9 @@
+You're helping users browse our shop by category.
+
+Product list:
+{{$products}}
+
+User is looking for category:
+{{$category}}
+
+Show 1–3 matching products in that category, order by price.
