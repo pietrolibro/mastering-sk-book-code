@@ -1,17 +1,57 @@
+# Python bytecode and cache
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Python virtual environments
+.env/
+.venv/
+venv/
+env/
+
+# macOS system files
+.DS_Store
+
+# VS Code settings
+.vscode/
+
+# Build artifacts (C#)
 src/chapters/chapter-02/csharp/bin/
 src/chapters/chapter-02/csharp/obj/
-
-src/chapters/chapter-02/python/.env
-src/chapters/chapter-02/python/hello-world-sk-chat-env/
-
 src/chapters/chapter-03/csharp/bin/
 src/chapters/chapter-03/csharp/obj/
-
-src/chapters/chapter-03/python/.env
-src/chapters/chapter-03/python/ai-shopping-assistant-env/
-
 src/chapters/chapter-05/csharp/bin/
 src/chapters/chapter-05/csharp/obj/
 
+# Python environments (per chapter)
+src/chapters/chapter-02/python/.env
+src/chapters/chapter-02/python/hello-world-sk-chat-env/
+src/chapters/chapter-03/python/.env
+src/chapters/chapter-03/python/ai-shopping-assistant-env/
+src/chapters/chapter-05/python/.env
+src/chapters/chapter-05/python/ai-shopping-assistant-env/
 
+# Python cache folders (per chapter)
+src/chapters/chapter-05/python/demos/__pycache__/
+src/chapters/chapter-05/python/helpers/__pycache__/
+src/chapters/chapter-05/python/models/__pycache__/
+src/chapters/chapter-05/python/services/__pycache__/
+src/chapters/chapter-05/python/plugins/__pycache__/
 
+# Test and coverage outputs
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Secrets (never commit real secrets)
+secrets/
+*.key
+*.pem
+*.crt
